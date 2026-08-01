@@ -4,10 +4,18 @@
     url = "https://code.videolan.org/videolan/dav1d/-/archive/1.2.1/dav1d-1.2.1.tar.bz2";
     sha256 = "a4003623cdc0109dec3aac8435520aa3fb12c4d69454fa227f2658cdb6dab5fa";
   };
+  # HIBIKI FORK: 6.0 (2023-02) left the maintenance branches long ago and gets no
+  # security backports. 6.1.6 is the tip of the 6.1 LTS branch and carries the
+  # fixes that matter for a player decoding untrusted files: magicyuv
+  # slice_height/median (an OOB write reachable from a crafted mkv/mov/avi), vp9
+  # dimension rollback, mov CENC 64-bit subsample bounds, mpegts descriptor
+  # accounting, plus a large batch of matroskadec bounds checks. Staying inside
+  # 6.x keeps lavu/lavc/lavf majors put, so mpv 0.36.0 and fftools-ffi (which
+  # both use APIs FFmpeg 7 removed) still build untouched.
   ffmpeg = {
-    version = "6.0";
-    url = "https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz";
-    sha256 = "57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082";
+    version = "6.1.6";
+    url = "https://ffmpeg.org/releases/ffmpeg-6.1.6.tar.xz";
+    sha256 = "d4fcb164028dd3beee5d92c0ac72e46aac6973c75ea12dc14de07bf8f407370a";
   };
   fftools-ffi = {
     version = "9b0d4da0";

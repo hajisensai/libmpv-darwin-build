@@ -43,7 +43,11 @@ let
 
     cd $src
     patch -p1 <${../../../patches/ffmpeg-fix-vp9-hwaccel.patch}
-    patch -p1 <${../../../patches/ffmpeg-fix-hls-mp4-seek.patch}
+    # ffmpeg-fix-hls-mp4-seek is gone: upstream merged it as f225f8d74645
+    # ("avformat/hls: reset the playlist init segment on seek") and it shipped in
+    # 6.1, so re-applying it is a reversed patch. `patch` would then prompt
+    # "Assume -R?" on stdin, which is the patch file itself inside the nix
+    # sandbox -- an unusable state rather than a clean failure.
     patch -p1 <${../../../patches/ffmpeg-fix-ios-hdr-texture.patch}
     patch -p1 <${../../../patches/ffmpeg-fix-dash-base-url-escape.patch}
     cd -
