@@ -9,6 +9,10 @@ on:
   pull_request:
     branches:
       - "*"
+  # HIBIKI FORK: upstream only ever builds from a push or a tag. This fork exists
+  # to produce xcframeworks on demand (e.g. after an FFmpeg security bump), so we
+  # need a way to rebuild a given ref without inventing a commit or a tag.
+  workflow_dispatch:
 
 jobs:
   ci:
