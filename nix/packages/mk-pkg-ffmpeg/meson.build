@@ -281,6 +281,8 @@ audio_full_options = [
 
 video_full_options = [
     '--enable-decoder=h264',
+    # mpv dump-cache writes the buffered range as mkv (Fushi #1953)
+    '--enable-muxer=matroska',
 ]
 
 audio_encodersgpl_options = [
