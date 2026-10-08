@@ -16,6 +16,8 @@ on:
 
 jobs:
   ci:
+    # This branch has the explicit macOS/iOS full-video matrix in bluray-menu.yml.
+    if: github.head_ref != 'codex/bluray-disc-menu'
     name: ci
     # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
     runs-on: macos-15

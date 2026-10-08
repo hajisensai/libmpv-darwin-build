@@ -46,7 +46,13 @@ jobs:
           XCODE_PATH=$(xcode-select -p | sed 's,/Contents/Developer$,,')
           make XCODE_PATH="$XCODE_PATH" VERSION=bluray-${GITHUB_SHA::12} \
             TARGET=mk-out-libs-macos-universal-video-full
-          LIB_DIR=$(realpath result)
+          LIB_DIR="$RUNNER_TEMP/libmpv-probe"
+          mkdir -p "$LIB_DIR"
+          cp -R result/. "$LIB_DIR/"
+          chmod -R u+w "$LIB_DIR"
+          # install_name_tool rewrites invalidate ad-hoc arm64 signatures.
+          # Sign only this temporary runtime probe copy; Xcode signs app frameworks.
+          for library in "$LIB_DIR"/*.dylib; do codesign --force --sign - "$library"; done
           DYLD_LIBRARY_PATH="$LIB_DIR" python3 tools/probe_libmpv.py "$LIB_DIR/libmpv.dylib" > artifacts/probe.json
           python3 -c 'import json; assert json.load(open("artifacts/probe.json"))["disc_navigation_state_json_property"]'
           lipo -archs "$LIB_DIR/libmpv.dylib" | tee artifacts/architectures.txt
