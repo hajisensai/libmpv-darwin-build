@@ -39,7 +39,7 @@ in pkgs.stdenvNoCC.mkDerivation {
     ../mk-pkg-libbluray/default.nix
   ];
   configurePhase = ''
-    OPTIONS=(-Dauto_features=disabled -Dgpl=false -Dcplayer=false -Dlibmpv=true
+    OPTIONS=(-Db_lundef=true -Dauto_features=disabled -Dgpl=false -Dcplayer=false -Dlibmpv=true
       -Diconv=enabled -Duchardet=enabled -Dzlib=enabled -Dgl=enabled
       -Dplain-gl=enabled -Dlibbluray=enabled)
     if [ "${os}" = macos ]; then
