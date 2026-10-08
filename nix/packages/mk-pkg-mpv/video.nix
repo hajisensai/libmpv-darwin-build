@@ -10,6 +10,7 @@ let
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch variant flavor; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
   crossFile = callPackage ../../utils/cross-file/default.nix { };
+  xctoolchainLipo = callPackage ../../utils/xctoolchain/lipo.nix { };
   src = callPackage ../../utils/fetch-tarball/default.nix {
     name = "mpv-menu-source-${lock.version}";
     inherit (lock) url sha256;
@@ -30,7 +31,7 @@ in pkgs.stdenvNoCC.mkDerivation {
   version = lock.version;
   src = patchedSource;
   dontUnpack = true;
-  nativeBuildInputs = [ pkgs.meson pkgs.ninja pkgs.pkg-config pkgs.python3 ];
+  nativeBuildInputs = [ pkgs.meson pkgs.ninja pkgs.pkg-config pkgs.python3 xctoolchainLipo ];
   buildInputs = builtins.map (path: callPackage path { }) [
     ../mk-pkg-ffmpeg/default.nix
     ../mk-pkg-libass/default.nix
