@@ -3,10 +3,11 @@
   os ? import ../../utils/default/os.nix,
   arch ? pkgs.callPackage ../../utils/default/arch.nix { },
   variant ? import ../../utils/default/variant.nix,
+  flavor ? import ../../utils/default/flavor.nix,
 }:
 let
   lock = (import ../../../packages.lock.nix).mpv-menu;
-  callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch variant; };
+  callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch variant flavor; };
   nativeFile = callPackage ../../utils/native-file/default.nix { };
   crossFile = callPackage ../../utils/cross-file/default.nix { };
   src = callPackage ../../utils/fetch-tarball/default.nix {

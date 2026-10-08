@@ -1,8 +1,8 @@
 {
   dav1d = {
     version = "1.2.1";
-    url = "https://code.videolan.org/videolan/dav1d/-/archive/1.2.1/dav1d-1.2.1.tar.bz2";
-    sha256 = "a4003623cdc0109dec3aac8435520aa3fb12c4d69454fa227f2658cdb6dab5fa";
+    url = "https://download.videolan.org/pub/videolan/dav1d/1.2.1/dav1d-1.2.1.tar.xz";
+    sha256 = "4e33eb61ec54c768a16da0cf8fa0928b4c4593f5f804a3c887d4a21c318340b2";
   };
   # HIBIKI FORK: 6.0 (2023-02) left the maintenance branches long ago and gets no
   # security backports. 6.1.6 is the tip of the 6.1 LTS branch and carries the
