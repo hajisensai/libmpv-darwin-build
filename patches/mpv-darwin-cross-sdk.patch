@@ -1,5 +1,27 @@
+diff --git a/input/input.c b/input/input.c
+index e15d4c60b..8533b4b0e 100644
+--- a/input/input.c
++++ b/input/input.c
+@@ -51,7 +51,7 @@
+ #include "stream/stream.h"
+ #include "common/common.h"
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+ #include "osdep/mac/app_bridge.h"
+ #endif
+ 
+@@ -1745,7 +1745,7 @@ static void reload_opts(struct input_ctx *ictx, bool shutdown)
+ {
+     m_config_cache_update(ictx->opts_cache);
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     struct input_opts *opts = ictx->opts;
+ 
+     if (ictx->using_cocoa_media_keys != (opts->use_media_keys && !shutdown)) {
 diff --git a/meson.build b/meson.build
-index c49aa3cec..74e2a072f 100644
+index c49aa3cec..e6ac35790 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -325,6 +325,9 @@ if cc.get_id() == 'gcc'
@@ -39,7 +61,7 @@ index c49aa3cec..74e2a072f 100644
      sources += files('video/out/hwdec/hwdec_ios_gl.m')
  endif
  
-@@ -1558,6 +1561,7 @@ videotoolbox_pl = get_option('videotoolbox-pl').require(
+@@ -1558,9 +1561,11 @@ videotoolbox_pl = get_option('videotoolbox-pl').require(
  )
  features += {'videotoolbox-pl': videotoolbox_pl.allowed()}
  if features['videotoolbox-gl'] or features['videotoolbox-pl'] or features['ios-gl']
@@ -47,7 +69,11 @@ index c49aa3cec..74e2a072f 100644
      sources += files('video/out/hwdec/hwdec_vt.c')
  endif
  if features['videotoolbox-gl']
-@@ -1571,14 +1575,14 @@ endif
++    dependencies += dependency('appleframeworks', modules: ['IOSurface'])
+     sources += files('video/out/hwdec/hwdec_mac_gl.c')
+ endif
+ if features['videotoolbox-pl']
+@@ -1571,14 +1576,14 @@ endif
  
  # macOS features
  macos_sdk_version_py = ''
@@ -64,7 +90,7 @@ index c49aa3cec..74e2a072f 100644
      macos_sdk_info = run_command(macos_sdk_version_py, check: true).stdout().split(',')
      macos_sdk_path = macos_sdk_info[0]
      macos_sdk_version = macos_sdk_info[1]
-@@ -1628,6 +1632,7 @@ endif
+@@ -1628,6 +1633,7 @@ endif
  
  swift_sources = []
  if features['cocoa'] and features['swift']
@@ -85,3 +111,43 @@ index 7b2f9058a..d2e1b356b 100644
      &clipboard_backend_mac,
  #endif
  #if HAVE_WAYLAND && HAVE_WAYLAND_PROTOCOLS_1_39
+diff --git a/player/main.c b/player/main.c
+index 5cc273c3e..e4f90666c 100644
+--- a/player/main.c
++++ b/player/main.c
+@@ -84,7 +84,7 @@ static const char def_config[] =
+ #include "osdep/w32_register.h"
+ #endif
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+ #include "osdep/mac/app_bridge.h"
+ #endif
+ 
+@@ -196,7 +196,7 @@ void mp_destroy(struct MPContext *mpctx)
+ 
+     osd_free(mpctx->osd);
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     cocoa_set_input_context(NULL);
+ #endif
+ 
+@@ -322,7 +322,7 @@ struct MPContext *mp_create(void)
+     mp_clients_init(mpctx);
+     mpctx->osd = osd_create(mpctx->global);
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     cocoa_set_input_context(mpctx->input);
+ #endif
+ 
+@@ -417,7 +417,7 @@ int mp_initialize(struct MPContext *mpctx, char **options)
+ 
+     MP_STATS(mpctx, "start init");
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     mpv_handle *ctx = mp_new_client(mpctx->clients, "mac");
+     cocoa_set_mpv_handle(ctx);
+ #endif
