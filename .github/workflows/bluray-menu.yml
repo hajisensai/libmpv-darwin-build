@@ -1,0 +1,63 @@
+name: Blu-ray menu native artifacts
+on:
+  push:
+    branches: [codex/bluray-disc-menu]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bluray-menu-artifacts-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  frameworks:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [macos, ios]
+    runs-on: macos-15
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v22
+        with:
+          extra-conf: |
+            sandbox = true
+            sandbox-fallback = false
+            max-jobs = 2
+            cores = 3
+      - name: Build full universal frameworks
+        shell: bash
+        run: |
+          set -euo pipefail
+          XCODE_PATH=$(xcode-select -p | sed 's,/Contents/Developer$,,')
+          make XCODE_PATH="$XCODE_PATH" VERSION=bluray-${GITHUB_SHA::12} \
+            TARGET=mk-out-archive-xcframeworks-${{ matrix.target }}-universal-video-full 2>&1 | tee build.log
+          mkdir artifacts
+          cp result/*.tar.gz artifacts/
+          shasum -a 256 artifacts/*.tar.gz > artifacts/SHA256SUMS
+      - name: Probe actual host library
+        if: matrix.target == 'macos'
+        shell: bash
+        run: |
+          set -euo pipefail
+          XCODE_PATH=$(xcode-select -p | sed 's,/Contents/Developer$,,')
+          make XCODE_PATH="$XCODE_PATH" VERSION=bluray-${GITHUB_SHA::12} \
+            TARGET=mk-out-libs-macos-universal-video-full
+          LIB_DIR="$RUNNER_TEMP/libmpv-probe"
+          mkdir -p "$LIB_DIR"
+          cp -R result/. "$LIB_DIR/"
+          chmod -R u+w "$LIB_DIR"
+          # install_name_tool rewrites invalidate ad-hoc arm64 signatures.
+          # Sign only this temporary runtime probe copy; Xcode signs app frameworks.
+          for library in "$LIB_DIR"/*.dylib; do codesign --force --sign - "$library"; done
+          DYLD_LIBRARY_PATH="$LIB_DIR" python3 tools/probe_libmpv.py "$LIB_DIR/libmpv.dylib" > artifacts/probe.json
+          python3 -c 'import json; assert json.load(open("artifacts/probe.json"))["disc_navigation_state_json_property"]'
+          lipo -archs "$LIB_DIR/libmpv.dylib" | tee artifacts/architectures.txt
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: bluray-menu-${{ matrix.target }}-${{ github.sha }}
+          if-no-files-found: error
+          path: |
+            artifacts/*
+            build.log

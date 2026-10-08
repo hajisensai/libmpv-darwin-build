@@ -1,8 +1,8 @@
 {
   dav1d = {
     version = "1.2.1";
-    url = "https://code.videolan.org/videolan/dav1d/-/archive/1.2.1/dav1d-1.2.1.tar.bz2";
-    sha256 = "a4003623cdc0109dec3aac8435520aa3fb12c4d69454fa227f2658cdb6dab5fa";
+    url = "https://download.videolan.org/pub/videolan/dav1d/1.2.1/dav1d-1.2.1.tar.xz";
+    sha256 = "4e33eb61ec54c768a16da0cf8fa0928b4c4593f5f804a3c887d4a21c318340b2";
   };
   # HIBIKI FORK: 6.0 (2023-02) left the maintenance branches long ago and gets no
   # security backports. 6.1.6 is the tip of the 6.1 LTS branch and carries the
@@ -81,6 +81,33 @@
     version = "3.4.1";
     url = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.1.tar.gz";
     sha256 = "a420fcf7103e54e775c383e3751729b8fb2dcd087f6165befd13f28315f754f5";
+  };
+  mpv-menu = {
+    version = "36abaa32d00a7229ee206aae12dc0e97e7962dca";
+    url = "https://github.com/mpv-player/mpv/archive/36abaa32d00a7229ee206aae12dc0e97e7962dca.tar.gz";
+    sha256 = "641330092b4d3271bae46397de8dbd32dc377611f896a23fc87afadc67410007";
+  };
+  fast-float = {
+    # Exact submodule revision from libplacebo v7.360.1.
+    version = "97b54ca9e75f5303507699d27c6b4f4efe4641a1";
+    url = "https://github.com/fastfloat/fast_float/archive/97b54ca9e75f5303507699d27c6b4f4efe4641a1.tar.gz";
+    sha256 = "2b132274539286e41f37857cac22aa8441d21bd86d55de825a3342b149f66801";
+  };
+  vulkan-headers = {
+    # libplacebo's disabled Vulkan backend still exports typed stub functions.
+    version = "450bd2232225d6c7728a4108055ac2e37cef6475";
+    url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/450bd2232225d6c7728a4108055ac2e37cef6475.tar.gz";
+    sha256 = "26df9841c30806a994e2fdf42f7c87bcb1ced9db9a06033469123939fb3fa075";
+  };
+  libplacebo = {
+    version = "7.360.1";
+    url = "https://github.com/haasn/libplacebo/archive/refs/tags/v7.360.1.tar.gz";
+    sha256 = "d05fdf90bea2f629eaa2d115e909fd356388ac639e54f77b87a018a6d76224bd";
+  };
+  libbluray = {
+    version = "1.5.0";
+    url = "https://download.videolan.org/pub/videolan/libbluray/1.5.0/libbluray-1.5.0.tar.xz";
+    sha256 = "f676408e91a5d321abf8b8d4dfdae36205c297dab5c54c3ec519639025f474a2";
   };
   mpv = {
     version = "0.36.0";

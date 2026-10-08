@@ -1,0 +1,153 @@
+diff --git a/input/input.c b/input/input.c
+index e15d4c60b..8533b4b0e 100644
+--- a/input/input.c
++++ b/input/input.c
+@@ -51,7 +51,7 @@
+ #include "stream/stream.h"
+ #include "common/common.h"
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+ #include "osdep/mac/app_bridge.h"
+ #endif
+ 
+@@ -1745,7 +1745,7 @@ static void reload_opts(struct input_ctx *ictx, bool shutdown)
+ {
+     m_config_cache_update(ictx->opts_cache);
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     struct input_opts *opts = ictx->opts;
+ 
+     if (ictx->using_cocoa_media_keys != (opts->use_media_keys && !shutdown)) {
+diff --git a/meson.build b/meson.build
+index c49aa3cec..e6ac35790 100644
+--- a/meson.build
++++ b/meson.build
+@@ -325,6 +325,9 @@ if cc.get_id() == 'gcc'
+ endif
+ 
+ darwin = host_machine.system() == 'darwin'
++if darwin
++    add_languages('objc', native: false)
++endif
+ win32 = host_machine.system() == 'cygwin' or host_machine.system() == 'windows'
+ posix = not win32
+ 
+@@ -435,8 +438,7 @@ if features['cocoa']
+     path_source += files('osdep/path-mac.m')
+     sources += files('osdep/language-mac.c',
+                      'osdep/utils-mac.c',
+-                     'osdep/mac/app_bridge.m',
+-                     'player/clipboard/clipboard-mac.m')
++                     'osdep/mac/app_bridge.m')
+     main_fn_source = files('osdep/main-fn-mac.c')
+ endif
+ 
+@@ -843,7 +845,7 @@ endif
+ 
+ audiounit_opt = get_option('audiounit').require(darwin)
+ audiounit = {
+-    'deps': dependency('appleframeworks', modules: ['Foundation', 'AudioToolbox'],
++    'deps': dependency('appleframeworks', modules: ['Foundation', 'AudioToolbox', 'AVFoundation'],
+                        required: audiounit_opt),
+     'symbol': cc.has_header_symbol('AudioToolbox/AudioToolbox.h', 'kAudioUnitSubType_RemoteIO',
+                                    required: audiounit_opt),
+@@ -1473,6 +1475,7 @@ ios_gl = cc.has_header_symbol('OpenGLES/ES3/glext.h', 'GL_RGB32F', required:
+     get_option('ios-gl').require(darwin))
+ features += {'ios-gl': ios_gl}
+ if features['ios-gl']
++    dependencies += dependency('appleframeworks', modules: ['OpenGLES'])
+     sources += files('video/out/hwdec/hwdec_ios_gl.m')
+ endif
+ 
+@@ -1558,9 +1561,11 @@ videotoolbox_pl = get_option('videotoolbox-pl').require(
+ )
+ features += {'videotoolbox-pl': videotoolbox_pl.allowed()}
+ if features['videotoolbox-gl'] or features['videotoolbox-pl'] or features['ios-gl']
++    dependencies += dependency('appleframeworks', modules: ['CoreVideo', 'CoreMedia', 'VideoToolbox'])
+     sources += files('video/out/hwdec/hwdec_vt.c')
+ endif
+ if features['videotoolbox-gl']
++    dependencies += dependency('appleframeworks', modules: ['IOSurface'])
+     sources += files('video/out/hwdec/hwdec_mac_gl.c')
+ endif
+ if features['videotoolbox-pl']
+@@ -1571,14 +1576,14 @@ endif
+ 
+ # macOS features
+ macos_sdk_version_py = ''
+-if darwin
++if darwin and not meson.is_cross_build()
+     macos_sdk_version_py = find_program(join_paths(source_root, 'TOOLS', 'macos-sdk-version.py'),
+                                                    required: true)
+ endif
+ 
+ macos_sdk_path = ''
+ macos_sdk_version = '0.0'
+-if darwin and macos_sdk_version_py.found()
++if darwin and not meson.is_cross_build() and macos_sdk_version_py.found()
+     macos_sdk_info = run_command(macos_sdk_version_py, check: true).stdout().split(',')
+     macos_sdk_path = macos_sdk_info[0]
+     macos_sdk_version = macos_sdk_info[1]
+@@ -1628,6 +1633,7 @@ endif
+ 
+ swift_sources = []
+ if features['cocoa'] and features['swift']
++    sources += files('player/clipboard/clipboard-mac.m')
+     swift_sources += files('osdep/mac/application.swift',
+                            'osdep/mac/app_hub.swift',
+                            'osdep/mac/clipboard.swift',
+diff --git a/player/clipboard/clipboard.c b/player/clipboard/clipboard.c
+index 7b2f9058a..d2e1b356b 100644
+--- a/player/clipboard/clipboard.c
++++ b/player/clipboard/clipboard.c
+@@ -40,7 +40,7 @@ static const struct clipboard_backend *const clipboard_backend_list[] = {
+ #if HAVE_WIN32_DESKTOP
+     &clipboard_backend_win32,
+ #endif
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     &clipboard_backend_mac,
+ #endif
+ #if HAVE_WAYLAND && HAVE_WAYLAND_PROTOCOLS_1_39
+diff --git a/player/main.c b/player/main.c
+index 5cc273c3e..e4f90666c 100644
+--- a/player/main.c
++++ b/player/main.c
+@@ -84,7 +84,7 @@ static const char def_config[] =
+ #include "osdep/w32_register.h"
+ #endif
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+ #include "osdep/mac/app_bridge.h"
+ #endif
+ 
+@@ -196,7 +196,7 @@ void mp_destroy(struct MPContext *mpctx)
+ 
+     osd_free(mpctx->osd);
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     cocoa_set_input_context(NULL);
+ #endif
+ 
+@@ -322,7 +322,7 @@ struct MPContext *mp_create(void)
+     mp_clients_init(mpctx);
+     mpctx->osd = osd_create(mpctx->global);
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     cocoa_set_input_context(mpctx->input);
+ #endif
+ 
+@@ -417,7 +417,7 @@ int mp_initialize(struct MPContext *mpctx, char **options)
+ 
+     MP_STATS(mpctx, "start init");
+ 
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     mpv_handle *ctx = mp_new_client(mpctx->clients, "mac");
+     cocoa_set_mpv_handle(ctx);
+ #endif

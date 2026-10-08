@@ -1,0 +1,133 @@
+--- a/meson.build
++++ b/meson.build
+@@ -52,9 +52,13 @@
+     test_args += '-D_POSIX_C_SOURCE=200809L'
+ endif
+ 
++darwin_disk_arbitration = false
+ if host_machine.system() == 'darwin'
+-    extra_dependencies += dependency('appleframeworks',
+-        modules: ['CoreFoundation', 'DiskArbitration'])
++    extra_dependencies += dependency('appleframeworks', modules: ['CoreFoundation'])
++    darwin_disk_arbitration = cc.has_header('DiskArbitration/DADisk.h')
++    if darwin_disk_arbitration
++        extra_dependencies += dependency('appleframeworks', modules: ['DiskArbitration'])
++    endif
+ elif host_machine.system() == 'netbsd'
+     test_args += '-D_NETBSD_SOURCE'
+ elif host_machine.system() == 'openbsd'
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -77,8 +77,12 @@
+         'file/dirs_darwin.c',
+         'file/dl_posix.c',
+         'file/file_posix.c',
+-        'file/mount_darwin.c',
+     )
++    if darwin_disk_arbitration
++        libbluray_src += files('file/mount_darwin.c')
++    else
++        libbluray_src += files('file/mount.c')
++    endif
+ else
+     libbluray_src += files(
+         'file/dir_posix.c',
+--- a/src/libbluray/bdj/bdj.c
++++ b/src/libbluray/bdj/bdj.c
+@@ -34,12 +34,16 @@
+ #include "util/logging.h"
+ 
+ 
++#ifdef __APPLE__
++#include <TargetConditionals.h>
++#endif
++
+ #include <jni.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#ifdef __APPLE__
++#if defined(__APPLE__) && TARGET_OS_OSX
+ #include <sys/types.h>
+ #include <sys/wait.h>
+ #include <limits.h>
+@@ -58,7 +62,7 @@
+ #endif
+ 
+ struct bdjava_s {
+-#if defined(__APPLE__) && !defined(HAVE_BDJ_J2ME)
++#if defined(__APPLE__) && TARGET_OS_OSX && !defined(HAVE_BDJ_J2ME)
+     void   *h_libjli;
+ #endif
+     void   *h_libjvm;
+@@ -232,13 +236,13 @@
+ }
+ #endif
+ 
+-#ifdef __APPLE__
++#if defined(__APPLE__) && TARGET_OS_OSX
+ // The current official JRE is installed by Oracle's Java Applet internet plugin:
+ #define MACOS_JRE_HOME "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
+ static const char *jre_plugin_path = MACOS_JRE_HOME;
+ #endif
+ 
+-#if defined(__APPLE__) && !defined(HAVE_BDJ_J2ME)
++#if defined(__APPLE__) && TARGET_OS_OSX && !defined(HAVE_BDJ_J2ME)
+ 
+ #define MACOS_JAVA_HOME "/usr/libexec/java_home"
+ static char *_java_home_macos()
+@@ -343,7 +347,7 @@
+   return dll;
+ }
+ 
+-#if defined(__APPLE__) && !defined(HAVE_BDJ_J2ME)
++#if defined(__APPLE__) && TARGET_OS_OSX && !defined(HAVE_BDJ_J2ME)
+ static void *_load_jli_macos()
+ {
+     const char *java_home = NULL;
+@@ -395,7 +399,7 @@
+     };
+     static const char         jvm_lib[]  = "jvm";
+ # else
+-#  ifdef __APPLE__
++#  if defined(__APPLE__) && TARGET_OS_OSX
+     static const char * const jvm_path[] = {NULL, JDK_HOME, MACOS_JRE_HOME};
+     static const char * const jvm_dir[]  = {"jre/lib/server",
+                                             "lib/server"};
+@@ -467,7 +471,7 @@
+     }
+ #endif
+ 
+-#if defined(__APPLE__) && !defined(HAVE_BDJ_J2ME)
++#if defined(__APPLE__) && TARGET_OS_OSX && !defined(HAVE_BDJ_J2ME)
+     java_home = _java_home_macos();
+     if (java_home) {
+         handle = _jvm_dlopen_a(java_home, jvm_dir, num_jvm_dir, jvm_lib);
+@@ -1030,7 +1034,7 @@
+         return NULL;
+     }
+ 
+-#if defined(__APPLE__) && !defined(HAVE_BDJ_J2ME)
++#if defined(__APPLE__) && TARGET_OS_OSX && !defined(HAVE_BDJ_J2ME)
+     /* On macOS we need to load libjli to workaround a bug where the wrong
+      * version would be used: https://bugs.openjdk.java.net/browse/JDK-7131356
+      */
+@@ -1065,7 +1069,7 @@
+         return NULL;
+     }
+ 
+-#if defined(__APPLE__) && !defined(HAVE_BDJ_J2ME)
++#if defined(__APPLE__) && TARGET_OS_OSX && !defined(HAVE_BDJ_J2ME)
+     bdjava->h_libjli = jli_lib;
+ #endif
+     bdjava->h_libjvm = jvm_lib;
+@@ -1130,7 +1134,7 @@
+         dl_dlclose(bdjava->h_libjvm);
+     }
+ 
+-#if defined(__APPLE__) && !defined(HAVE_BDJ_J2ME)
++#if defined(__APPLE__) && TARGET_OS_OSX && !defined(HAVE_BDJ_J2ME)
+     if (bdjava->h_libjli) {
+         dl_dlclose(bdjava->h_libjli);
+     }
