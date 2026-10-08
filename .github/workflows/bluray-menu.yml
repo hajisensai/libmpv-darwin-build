@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: bluray-menu-${{ github.ref }}
+  group: bluray-menu-artifacts-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   frameworks:
@@ -25,9 +25,6 @@ jobs:
             sandbox-fallback = false
             max-jobs = 2
             cores = 3
-      - uses: DeterminateSystems/magic-nix-cache-action@v13
-        with:
-          use-flakehub: false
       - name: Build full universal frameworks
         shell: bash
         run: |
