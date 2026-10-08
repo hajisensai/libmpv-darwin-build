@@ -16,10 +16,15 @@ let
     name = "libplacebo-fast-float-source";
     inherit ((import ../../../packages.lock.nix).fast-float) url sha256;
   };
+  vulkanHeaders = callPackage ../../utils/fetch-tarball/default.nix {
+    name = "libplacebo-vulkan-headers-source";
+    inherit ((import ../../../packages.lock.nix).vulkan-headers) url sha256;
+  };
   completeSource = pkgs.runCommand "libplacebo-complete-source-${lock.version}" { } ''
     cp -r ${source} source
     chmod -R u+w source
     cp -r ${fastFloat}/. source/3rdparty/fast_float/
+    cp -r ${vulkanHeaders}/. source/3rdparty/Vulkan-Headers/
     cp -r source $out
   '';
 in pkgs.stdenvNoCC.mkDerivation {
