@@ -87,6 +87,12 @@
     url = "https://github.com/mpv-player/mpv/archive/36abaa32d00a7229ee206aae12dc0e97e7962dca.tar.gz";
     sha256 = "641330092b4d3271bae46397de8dbd32dc377611f896a23fc87afadc67410007";
   };
+  fast-float = {
+    # Exact submodule revision from libplacebo v7.360.1.
+    version = "97b54ca9e75f5303507699d27c6b4f4efe4641a1";
+    url = "https://github.com/fastfloat/fast_float/archive/97b54ca9e75f5303507699d27c6b4f4efe4641a1.tar.gz";
+    sha256 = "2b132274539286e41f37857cac22aa8441d21bd86d55de825a3342b149f66801";
+  };
   libplacebo = {
     version = "7.360.1";
     url = "https://github.com/haasn/libplacebo/archive/refs/tags/v7.360.1.tar.gz";

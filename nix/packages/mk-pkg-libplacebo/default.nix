@@ -12,10 +12,20 @@ let
     name = "libplacebo-source-${lock.version}";
     inherit (lock) url sha256;
   };
+  fastFloat = callPackage ../../utils/fetch-tarball/default.nix {
+    name = "libplacebo-fast-float-source";
+    inherit ((import ../../../packages.lock.nix).fast-float) url sha256;
+  };
+  completeSource = pkgs.runCommand "libplacebo-complete-source-${lock.version}" { } ''
+    cp -r ${source} source
+    chmod -R u+w source
+    cp -r ${fastFloat}/. source/3rdparty/fast_float/
+    cp -r source $out
+  '';
 in pkgs.stdenvNoCC.mkDerivation {
   pname = "libplacebo-${os}-${arch}";
   version = lock.version;
-  src = source;
+  src = completeSource;
   dontUnpack = true;
   nativeBuildInputs = [ pkgs.meson pkgs.ninja pkgs.pkg-config pkgs.python3 ];
   # Meson's find_installation() selects Meson's interpreter, not a PATH wrapper.
