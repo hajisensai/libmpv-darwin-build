@@ -17,7 +17,10 @@ in pkgs.stdenvNoCC.mkDerivation {
   version = lock.version;
   src = source;
   dontUnpack = true;
-  nativeBuildInputs = [ pkgs.meson pkgs.ninja pkgs.pkg-config (pkgs.python3.withPackages (p: [ p.jinja2 ])) ];
+  nativeBuildInputs = [ pkgs.meson pkgs.ninja pkgs.pkg-config pkgs.python3 ];
+  # Meson's find_installation() selects Meson's interpreter, not a PATH wrapper.
+  # Its generated commands must receive the template engine explicitly.
+  PYTHONPATH = "${pkgs.python3Packages.jinja2}/${pkgs.python3.sitePackages}:${pkgs.python3Packages.markupsafe}/${pkgs.python3.sitePackages}";
   configurePhase = ''
     meson setup build $src --native-file ${nativeFile} --cross-file ${crossFile} \
       --prefix=$out --default-library=shared --wrap-mode=nodownload -Dauto_features=disabled -Ddovi=enabled -Ddemos=false -Dtests=false
