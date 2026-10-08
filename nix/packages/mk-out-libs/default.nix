@@ -43,6 +43,8 @@ if arch != archs.universal then
     dav1d = callPackage ../mk-pkg-dav1d/default.nix { };
     libxml2 = callPackage ../mk-pkg-libxml2/default.nix { };
     uchardet = callPackage ../mk-pkg-uchardet/default.nix { };
+    libplacebo = callPackage ../mk-pkg-libplacebo/default.nix { };
+    libbluray = callPackage ../mk-pkg-libbluray/default.nix { };
     libass = callPackage ../mk-pkg-libass/default.nix { };
     harfbuzz = callPackage ../mk-pkg-harfbuzz/default.nix { };
     fribidi = callPackage ../mk-pkg-fribidi/default.nix { };
@@ -63,6 +65,8 @@ if arch != archs.universal then
         libogg
       ]
       ++ pkgs.lib.optionals (variant == variants.video) [
+        libplacebo
+        libbluray
         dav1d
         libxml2
         uchardet

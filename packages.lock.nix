@@ -82,6 +82,21 @@
     url = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.1.tar.gz";
     sha256 = "a420fcf7103e54e775c383e3751729b8fb2dcd087f6165befd13f28315f754f5";
   };
+  mpv-menu = {
+    version = "36abaa32d00a7229ee206aae12dc0e97e7962dca";
+    url = "https://github.com/mpv-player/mpv/archive/36abaa32d00a7229ee206aae12dc0e97e7962dca.tar.gz";
+    sha256 = "641330092b4d3271bae46397de8dbd32dc377611f896a23fc87afadc67410007";
+  };
+  libplacebo = {
+    version = "7.360.1";
+    url = "https://github.com/haasn/libplacebo/archive/refs/tags/v7.360.1.tar.gz";
+    sha256 = "d05fdf90bea2f629eaa2d115e909fd356388ac639e54f77b87a018a6d76224bd";
+  };
+  libbluray = {
+    version = "1.5.0";
+    url = "https://download.videolan.org/pub/videolan/libbluray/1.5.0/libbluray-1.5.0.tar.xz";
+    sha256 = "f676408e91a5d321abf8b8d4dfdae36205c297dab5c54c3ec519639025f474a2";
+  };
   mpv = {
     version = "0.36.0";
     url = "https://github.com/mpv-player/mpv/archive/refs/tags/v0.36.0.tar.gz";

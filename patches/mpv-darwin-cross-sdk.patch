@@ -1,0 +1,31 @@
+diff --git a/meson.build b/meson.build
+index c49aa3cec..2591f42a2 100644
+--- a/meson.build
++++ b/meson.build
+@@ -325,6 +325,9 @@ if cc.get_id() == 'gcc'
+ endif
+ 
+ darwin = host_machine.system() == 'darwin'
++if darwin
++    add_languages('objc', native: false)
++endif
+ win32 = host_machine.system() == 'cygwin' or host_machine.system() == 'windows'
+ posix = not win32
+ 
+@@ -1571,14 +1574,14 @@ endif
+ 
+ # macOS features
+ macos_sdk_version_py = ''
+-if darwin
++if darwin and not meson.is_cross_build()
+     macos_sdk_version_py = find_program(join_paths(source_root, 'TOOLS', 'macos-sdk-version.py'),
+                                                    required: true)
+ endif
+ 
+ macos_sdk_path = ''
+ macos_sdk_version = '0.0'
+-if darwin and macos_sdk_version_py.found()
++if darwin and not meson.is_cross_build() and macos_sdk_version_py.found()
+     macos_sdk_info = run_command(macos_sdk_version_py, check: true).stdout().split(',')
+     macos_sdk_path = macos_sdk_info[0]
+     macos_sdk_version = macos_sdk_info[1]
