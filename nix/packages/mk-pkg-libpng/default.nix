@@ -38,6 +38,7 @@ let
         # extract and patch libpng dependency
         unzip ${libpngPatch} -d libpng-patch
         rsync -a libpng-patch/libpng-*/ $src/
+        (cd $src && patch -p1 <${../../../patches/libpng-modern-apple-math.patch})
 
         cp -r $src $out
       '';
