@@ -47,7 +47,10 @@ in pkgs.stdenvNoCC.mkDerivation {
       -Diconv=enabled -Duchardet=enabled -Dzlib=enabled -Dgl=enabled
       -Dplain-gl=enabled -Dlibbluray=enabled)
     if [ "${os}" = macos ]; then
-      OPTIONS+=(-Dcoreaudio=enabled -Dcocoa=enabled -Dgl-cocoa=enabled -Dvideotoolbox-gl=enabled)
+      # avfoundation is mpv's next AO after coreaudio: when coreaudio cannot set
+      # the channel layout on the AudioUnit (-50, seen on macOS 27), mpv falls
+      # back to it instead of playing video without sound (Fushi).
+      OPTIONS+=(-Dcoreaudio=enabled -Davfoundation=enabled -Dcocoa=enabled -Dgl-cocoa=enabled -Dvideotoolbox-gl=enabled)
     else
       OPTIONS+=(-Daudiounit=enabled -Dios-gl=enabled)
     fi

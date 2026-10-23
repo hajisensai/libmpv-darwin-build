@@ -77,6 +77,8 @@ jobs:
           strings "$LIB_DIR/libmpv.dylib" > artifacts/libmpv.strings.txt
           grep -Fq 'without DefaultDuration' artifacts/libmpv.strings.txt
           grep -Fq 'Deriving missing DTS' artifacts/libmpv.strings.txt
+          # Fallback audio output when coreaudio fails to initialize.
+          grep -Fq 'AVFoundation AVSampleBufferAudioRenderer' artifacts/libmpv.strings.txt
       - uses: actions/upload-artifact@v7
         if: always()
         with:
