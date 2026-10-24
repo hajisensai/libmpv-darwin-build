@@ -3,7 +3,7 @@ name: Unified FFmpeg libmpv frameworks
 # (nix/packages/mk-pkg-ffmpeg-external, pinned in packages.lock.nix).
 on:
   push:
-    branches: [fushi/unified-ffmpeg]
+    branches: [fushi/unified-ffmpeg, fushi/dvd]
   workflow_dispatch:
 permissions:
   contents: read

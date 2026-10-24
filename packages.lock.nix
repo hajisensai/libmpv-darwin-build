@@ -5,12 +5,12 @@
   ffmpeg-unified = {
     version = "9.0.1";
     ios = {
-      url = "https://github.com/hajisensai/libmpv-darwin-build/releases/download/unified-ffmpeg-9.0.1-r1/ffmpeg-unified-9.0.1-ios-xcframeworks.tar.gz";
-      sha256 = "e2bdd97efc1416f511299d894e6107d860c85d75d1afd68c8751daf6407bb1e4";
+      url = "https://github.com/hajisensai/libmpv-darwin-build/releases/download/unified-ffmpeg-9.0.1-r2/ffmpeg-unified-9.0.1-ios-xcframeworks.tar.gz";
+      sha256 = "0795a77229106bae7d54b58f70fe887ab126adf652b55de414ef9f2e1e89e6a7";
     };
     macos = {
-      url = "https://github.com/hajisensai/libmpv-darwin-build/releases/download/unified-ffmpeg-9.0.1-r1/ffmpeg-unified-9.0.1-macos-xcframeworks.tar.gz";
-      sha256 = "66ccad7ea913b8b2defc721f925d0b1df0743a1a6fd6db2aa36d3e32583e4ca1";
+      url = "https://github.com/hajisensai/libmpv-darwin-build/releases/download/unified-ffmpeg-9.0.1-r2/ffmpeg-unified-9.0.1-macos-xcframeworks.tar.gz";
+      sha256 = "310d381670879f61a46df6b5e5feeb088ffa1c49e8776db83151e7ebcebc54e5";
     };
   };
   dav1d = {

@@ -43,9 +43,9 @@ in pkgs.stdenvNoCC.mkDerivation {
     ../mk-pkg-libbluray/default.nix
   ];
   configurePhase = ''
-    OPTIONS=(-Db_lundef=true -Dauto_features=disabled -Dgpl=false -Dcplayer=false -Dlibmpv=true
+    OPTIONS=(-Db_lundef=true -Dauto_features=disabled -Dgpl=true -Dcplayer=false -Dlibmpv=true
       -Diconv=enabled -Duchardet=enabled -Dzlib=enabled -Dgl=enabled
-      -Dplain-gl=enabled -Dlibbluray=enabled)
+      -Dplain-gl=enabled -Dlibbluray=enabled -Ddvdnav=enabled -Ddvda=disabled)
     if [ "${os}" = macos ]; then
       OPTIONS+=(-Dcoreaudio=enabled -Dcocoa=enabled -Dgl-cocoa=enabled -Dvideotoolbox-gl=enabled)
     else
